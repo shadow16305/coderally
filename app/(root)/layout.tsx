@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "../globals.css";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { Provider } from "../providers/provider";
+import { cn } from "@/lib/utils";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -20,11 +21,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <Provider>
-        <body className={poppins.className}>
-          <Sidebar />
-          {children}
+        <body className={cn("overflow-x-hidden", poppins.className)}>
+          <Sidebar>{children}</Sidebar>
         </body>
       </Provider>
     </html>

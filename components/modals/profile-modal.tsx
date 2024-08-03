@@ -1,72 +1,97 @@
 "use client";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { UserRound } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { UserRound, X } from "lucide-react";
 import Image from "next/image";
 import { CldUploadButton } from "next-cloudinary";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import axios from "axios";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { Input } from "../ui/input";
+import { useRouter } from "next/navigation";
+import { User } from "@prisma/client";
+import { signOut } from "next-auth/react";
 
-export const ProfileModal = ({
-  isOpen,
-  onClose,
-  name,
-}: {
+interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  name: string | null | undefined;
-}) => {
-  const { data: session } = useSession();
-  const [imageSrc, setImageSrc] = useState(session?.user?.image || "");
+  currentUser?: User;
+}
+
+export const ProfileModal = ({ isOpen, onClose, currentUser }: ProfileModalProps) => {
   const [loading, setLoading] = useState(false);
 
-  const handleImageUpload = async (result: any) => {
-    if (result?.event === "success") {
-      const newImageUrl = result.info.secure_url;
-      setImageSrc(newImageUrl);
+  const { register, handleSubmit, setValue, watch } = useForm<FieldValues>({
+    defaultValues: {
+      image: currentUser?.image || "",
+      name: currentUser?.name || "",
+    },
+  });
 
-      try {
-        setLoading(true);
-        await axios.post("/api/update-profile", {
-          image: newImageUrl,
-          name: session?.user?.name,
-        });
-      } catch (error) {
-        console.error("Error updating profile image:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const imageSrc = watch("image");
+
+  const router = useRouter();
+
+  const handleImageUpload = (result: any) => {
+    setValue("image", result?.info?.secure_url, {
+      shouldValidate: true,
+    });
+  };
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    setLoading(true);
+
+    axios.post("/api/settings", data).then(() => {
+      router.refresh();
+      onClose();
+    });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Profile | {name}</DialogTitle>
-          <DialogDescription>Edit your profile</DialogDescription>
-        </DialogHeader>
+    <div className="bg-neutral-100 rounded-xl h-fit w-[400px] space-y-4 p-4">
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <p className="text-2xl font-semibold">Profile | {currentUser?.name}</p>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <X className="hover:text-neutral-900/90" />
+          </Button>
+        </div>
+        <p className="text-neutral-700">Edit your profile</p>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center justify-between">
           {imageSrc ? (
-            <Image src={imageSrc} alt="user avatar" width={128} height={128} className="rounded-full" />
+            <div className="relative size-[128px] overflow-hidden">
+              <Image src={imageSrc} alt="user avatar" fill className="rounded-full object-cover" />
+            </div>
           ) : (
-            <div className="rounded-full bg-neutral-300 p-2">
-              <UserRound size={96} />
+            <div className="bg-neutral-200 rounded-full p-4">
+              <UserRound size={128} />
             </div>
           )}
           <div className="flex flex-col gap-y-2">
             <CldUploadButton
+              uploadPreset="kgdxzou4"
               options={{ maxFiles: 1 }}
               onSuccess={handleImageUpload}
-              uploadPreset="kgdxzou4"
-              className="px-4 py-2 rounded-xl text-sm bg-neutral-900 text-neutral-50 hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 transition-colors">
+              className="bg-neutral-900 text-neutral-50 hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 px-4 py-2 rounded-md cursor-pointer transition-colors">
               Change Profile Image
             </CldUploadButton>
+            <Input {...register("name")} disabled={loading} id="name" placeholder="Change Username" />
+            <Button
+              variant="destructive"
+              type="button"
+              onClick={() => signOut({ callbackUrl: "http://localhost:3000" })}>
+              Log out
+            </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+        <div className="flex justify-end mt-4">
+          <Button type="submit" disabled={loading}>
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };
