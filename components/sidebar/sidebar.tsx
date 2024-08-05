@@ -75,6 +75,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                 href: "/login",
                 icon: <LogIn />,
               }}
+              data-test="login-link"
             />
           ) : (
             <div>

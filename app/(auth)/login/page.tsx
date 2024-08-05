@@ -40,7 +40,11 @@ export default function Login() {
       <form
         className="p-6 w-full max-w-[400px] flex flex-col justify-between items-center gap-2 rounded-2xl ring-1 ring-neutral-950/50"
         onSubmit={handleSubmit(onSubmit)}>
-        {error && <div className="text-black">{error}</div>}
+        {error && (
+          <p className="text-red-600" data-test="login-credential-error">
+            {error}
+          </p>
+        )}
         <h1 className="mb-5 w-full text-2xl font-bold">Sign In</h1>
         <label className="w-full text-sm">Email</label>
         <input
@@ -48,6 +52,7 @@ export default function Login() {
           placeholder="Email"
           className="w-full h-8 border border-solid border-black rounded p-2"
           {...register("email", { required: true })}
+          data-test="login-email-input"
         />
         <label className="w-full text-sm">Password</label>
         <div className="flex w-full">
@@ -56,9 +61,10 @@ export default function Login() {
             placeholder="Password"
             className="w-full h-8 border border-solid border-black rounded p-2"
             {...register("password", { required: true })}
+            data-test="login-password-input"
           />
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" data-test="login-submit">
           Sign in
         </Button>
         <div className="flex items-center gap-x-2 w-full">
@@ -69,7 +75,10 @@ export default function Login() {
             <IconBrandGithub />
           </Button>
         </div>
-        <Link href="/signup" className="text-sm text-[#888] transition duration-150 ease hover:text-black">
+        <Link
+          href="/signup"
+          className="text-sm text-[#888] transition duration-150 ease hover:text-black"
+          data-test="signup-link">
           Don't have an account?
         </Link>
       </form>
