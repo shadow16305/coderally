@@ -1,5 +1,6 @@
 "use client";
 
+import { CategoryModal } from "@/components/modals/category-modal";
 import { PostModal } from "@/components/modals/post-modal";
 import {
   DropdownMenu,
@@ -13,6 +14,7 @@ import { useState } from "react";
 
 export const Dropdown = () => {
   const [open, setOpen] = useState(false);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
   return (
     <>
@@ -23,10 +25,11 @@ export const Dropdown = () => {
         <DropdownMenuContent>
           <DropdownMenuItem onClick={() => setOpen(true)}>Add post</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Create category</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setCategoryModalOpen(true)}>Create category</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <PostModal open={open} onClose={() => setOpen(false)} />
+      <CategoryModal open={categoryModalOpen} onClose={() => setCategoryModalOpen(false)} />
     </>
   );
 };

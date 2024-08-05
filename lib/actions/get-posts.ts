@@ -4,9 +4,10 @@ import prisma from "@/lib/prismadb";
 
 const getPosts = async () => {
   try {
-    const posts = await prisma.posts.findMany({
+    const posts = await prisma.post.findMany({
       include: {
-        poster: true,
+        author: true,
+        category: true,
       },
     });
     return posts;

@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRound, X } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import { CldUploadButton } from "next-cloudinary";
 import { Button } from "../ui/button";
@@ -8,9 +8,9 @@ import { useState } from "react";
 import axios from "axios";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../ui/input";
-import { useRouter } from "next/navigation";
 import { User } from "@prisma/client";
 import { signOut } from "next-auth/react";
+import toast from "react-hot-toast";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -30,8 +30,6 @@ export const ProfileModal = ({ isOpen, onClose, currentUser }: ProfileModalProps
 
   const imageSrc = watch("image");
 
-  const router = useRouter();
-
   const handleImageUpload = (result: any) => {
     setValue("image", result?.info?.secure_url, {
       shouldValidate: true,
@@ -41,14 +39,21 @@ export const ProfileModal = ({ isOpen, onClose, currentUser }: ProfileModalProps
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setLoading(true);
 
-    axios.post("/api/settings", data).then(() => {
-      router.refresh();
-      onClose();
-    });
+    axios
+      .post("/api/settings", data)
+      .then(() => {
+        onClose();
+        toast.success("Profile Updated!");
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Failed to update profile");
+        setLoading(false);
+      });
   };
 
   return (
-    <div className="bg-neutral-100 rounded-xl h-fit w-[400px] space-y-4 p-4">
+    <div className={`bg-neutral-100 rounded-xl h-fit w-fit space-y-4 p-4 ${isOpen ? "block" : "hidden"}`}>
       <div className="space-y-1">
         <div className="flex items-center justify-between">
           <p className="text-2xl font-semibold">Profile | {currentUser?.name}</p>
@@ -59,14 +64,16 @@ export const ProfileModal = ({ isOpen, onClose, currentUser }: ProfileModalProps
         <p className="text-neutral-700">Edit your profile</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-x-8">
           {imageSrc ? (
             <div className="relative size-[128px] overflow-hidden">
               <Image src={imageSrc} alt="user avatar" fill className="rounded-full object-cover" />
             </div>
           ) : (
             <div className="bg-neutral-200 rounded-full p-4">
-              <UserRound size={128} />
+              <div className="relative size-[128px] overflow-hidden">
+                <Image src="/images/placeholder.png" alt="user avatar" fill className="rounded-full object-cover" />
+              </div>
             </div>
           )}
           <div className="flex flex-col gap-y-2">

@@ -7,32 +7,33 @@ export async function POST(request: Request) {
     const currentUser = await getCurrentUser();
     const body = await request.json();
 
-    const { id, title, content, image, userId, category } = body;
+    const { name } = body;
 
     if (!currentUser?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    if (!title || !content || !userId) {
+    if (!name) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
-    let post;
+    const existingCategory = await prisma.category.findFirst({
+      where: { name },
+    });
 
-    if (id) {
-      post = await prisma.posts.update({
-        where: { id },
-        data: { title, content, image, userId },
-      });
+    let category;
+
+    if (existingCategory) {
+      return new NextResponse("Category already exists", { status: 409 });
     } else {
-      post = await prisma.posts.create({
-        data: { title, content, image, userId, category },
+      category = await prisma.category.create({
+        data: { name },
       });
     }
 
-    return NextResponse.json(post);
+    return NextResponse.json(category);
   } catch (error: any) {
-    console.error("Error creating or updating post:", error);
+    console.error("Error creating category:", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { User } from "@prisma/client";
 
 import { IconBrandTabler } from "@tabler/icons-react";
-import { Bookmark, ChartBarStacked, LogIn, UserRound } from "lucide-react";
+import { Bookmark, ChartBarStacked, LogIn } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SidebarBody } from "./sidebar-body";
@@ -42,6 +42,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const { data: session } = useSession();
+  const { open, animate } = useSidebar();
 
   useEffect(() => {
     const getUser = async () => {
@@ -51,8 +52,6 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
     getUser();
   }, []);
-
-  const { open, animate } = useSidebar();
 
   return (
     <>
@@ -88,7 +87,9 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                     <Image src={user.image} alt="User" fill className="rounded-full" />
                   </div>
                 ) : (
-                  <UserRound />
+                  <div className="relative size-8">
+                    <Image src="/images/placeholder.png" alt="User" fill className="rounded-full" />
+                  </div>
                 )}
                 {user?.name && (
                   <motion.span
