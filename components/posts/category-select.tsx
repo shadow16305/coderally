@@ -20,7 +20,12 @@ export const CategorySelect = ({ categories, value, setValue }: CategorySelectPr
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+          data-test="category-select-box">
           {value ? categories?.find((framework) => framework.name === value)?.name : "Select category..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -31,14 +36,15 @@ export const CategorySelect = ({ categories, value, setValue }: CategorySelectPr
           <CommandList>
             <CommandEmpty>No categories found.</CommandEmpty>
             <CommandGroup>
-              {categories?.map((category) => (
+              {categories?.map((category, index) => (
                 <CommandItem
-                  key={category.id}
+                  key={index}
                   value={category.name}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
-                  }}>
+                  }}
+                  data-test={`category-select-item-${index}`}>
                   <Check className={cn("mr-2 h-4 w-4", value === category.name ? "opacity-100" : "opacity-0")} />
                   {category.name}
                 </CommandItem>

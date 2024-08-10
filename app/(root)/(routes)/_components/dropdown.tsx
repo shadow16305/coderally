@@ -19,11 +19,15 @@ export const Dropdown = () => {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="hover:bg-neutral-100 transition-colors p-2 rounded-md focus:outline-none">
+        <DropdownMenuTrigger
+          className="hover:bg-neutral-100 transition-colors p-2 rounded-md focus:outline-none"
+          data-test="home-dropdown-create">
           <Plus />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => setOpen(true)}>Add post</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpen(true)} data-test="home-dropdown-post">
+            Add post
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setCategoryModalOpen(true)}>Create category</DropdownMenuItem>
         </DropdownMenuContent>

@@ -10,7 +10,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { CategoryModal } from "./category-modal";
 import getCategories from "@/lib/actions/get-categories";
-import { CategorySelect } from "../category-select";
+import { CategorySelect } from "../posts/category-select";
 import { Category } from "@prisma/client";
 import { useEffect, useState } from "react";
 import getCurrentUser from "@/lib/actions/get-current-user";
@@ -73,25 +73,36 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
                   <Label className="text-base" htmlFor="title">
                     Title
                   </Label>
-                  <Input id="title" {...register("title")} />
+                  <Input id="title" {...register("title")} data-test="post-title-input" />
                 </div>
                 <div>
                   <Label htmlFor="content" className="text-base">
                     Content
                   </Label>
-                  <Textarea id="content" {...register("content")} />
+                  <Textarea id="content" {...register("content")} data-test="post-content-input" />
                 </div>
                 <div>
                   <span className="font-medium text-base">Category</span>
                   <div className="flex items-center gap-x-4">
-                    <CategorySelect categories={categories} value={categoryValue} setValue={setCategoryValue} />
+                    <CategorySelect
+                      categories={categories}
+                      value={categoryValue}
+                      setValue={setCategoryValue}
+                      data-test="post-category-select"
+                    />
                     <span>or</span>
-                    <Button variant="secondary" onClick={() => setCategoryModalOpen(true)} type="button">
+                    <Button
+                      variant="secondary"
+                      onClick={() => setCategoryModalOpen(true)}
+                      type="button"
+                      data-test="post-create-category">
                       Create category
                     </Button>
                   </div>
                 </div>
-                <Button type="submit">Post</Button>
+                <Button type="submit" data-test="post-submit">
+                  Post
+                </Button>
               </form>
             </DialogDescription>
           </DialogHeader>
