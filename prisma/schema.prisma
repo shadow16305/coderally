@@ -8,34 +8,51 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid()) @map("_id")
-  email          String   @unique
+  id             String     @id @default(uuid()) @map("_id")
+  email          String     @unique
   name           String
   image          String?
   hashedPassword String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
   posts          Post[]
+  savedPosts     Bookmark[]
+  categories     Category[]
 }
 
 model Post {
-  id        String   @id @default(uuid()) @map("_id")
-  title     String
-  content   String
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id         String     @id @default(uuid()) @map("_id")
+  title      String
+  content    String
+  image      String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   authorId   String
-  author     User     @relation(fields: [authorId], references: [id])
+  author     User       @relation(fields: [authorId], references: [id])
   categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category   @relation(fields: [categoryId], references: [id])
+  savedPosts Bookmark[]
 
   @@index([categoryId])
 }
 
 model Category {
-  id    String @id @default(uuid()) @map("_id")
-  name  String
-  posts Post[]
+  id          String @id @default(uuid()) @map("_id")
+  name        String
+  posts       Post[]
+  description String
+  followers   Int?
+  authorId    String
+  author      User   @relation(fields: [authorId], references: [id])
+}
+
+model Bookmark {
+  id        String   @id @default(uuid()) @map("_id")
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
 }

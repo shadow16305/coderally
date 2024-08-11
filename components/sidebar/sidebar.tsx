@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { User } from "@prisma/client";
 
 import { IconBrandTabler } from "@tabler/icons-react";
-import { Bookmark, ChartBarStacked, LogIn } from "lucide-react";
+import { Bookmark, ChartBarStacked, LogIn, ThumbsUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SidebarBody } from "./sidebar-body";
@@ -22,8 +22,13 @@ import { useSidebar } from "@/hooks/use-sidebar";
 const links = [
   {
     label: "Home",
-    href: "#",
+    href: "/",
     icon: <IconBrandTabler className="text-red-500 h-5 w-5 flex-shrink-0" />,
+  },
+  {
+    label: "Categories",
+    href: "/categories",
+    icon: <ChartBarStacked className="text-green-500 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
   },
   {
     label: "Saved Posts",
@@ -31,9 +36,9 @@ const links = [
     icon: <Bookmark className="text-yellow-500 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
   },
   {
-    label: "Categories",
+    label: "Liked Posts",
     href: "#",
-    icon: <ChartBarStacked className="text-green-500 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
+    icon: <ThumbsUp className="text-blue-500 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
   },
 ];
 

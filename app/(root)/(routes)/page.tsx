@@ -1,5 +1,5 @@
 import { Dropdown } from "./_components/dropdown";
-import { SearchBox } from "./_components/search-box";
+import { SearchBox } from "../../../components/ui/search-box";
 import { Recent } from "./_components/recent";
 import { Separator } from "@/components/ui/separator";
 import { PopularPosts } from "./_components/popular-posts";
