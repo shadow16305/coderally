@@ -37,3 +37,41 @@ export async function POST(request: Request) {
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const currentUser = await getCurrentUser();
+    const body = await request.json();
+
+    const { id } = body;
+
+    if (!currentUser?.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const existingCategory = await prisma.category.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingCategory) {
+      return new NextResponse("Invalid ID", { status: 400 });
+    }
+
+    if (existingCategory.authorId !== currentUser.id) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+
+    const deletedCategory = await prisma.category.delete({
+      where: {
+        id,
+      },
+    });
+
+    return NextResponse.json(deletedCategory);
+  } catch (error: any) {
+    console.error("Error deleting category:", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
