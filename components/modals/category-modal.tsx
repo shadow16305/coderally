@@ -9,6 +9,9 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../ui/text-area";
 import { Label } from "../ui/label";
+import { useEffect, useState } from "react";
+import getCurrentUser from "@/lib/actions/get-current-user";
+import { User } from "@prisma/client";
 
 interface CategoryModalProps {
   open: boolean;
@@ -16,13 +19,24 @@ interface CategoryModalProps {
 }
 
 export const CategoryModal = ({ open, onClose }: CategoryModalProps) => {
+  const [user, setUser] = useState<User | null>();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    };
+
+    getUser();
+  }, []);
+
   const { register, handleSubmit } = useForm<FieldValues>();
 
   const router = useRouter();
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     axios
-      .post("/api/category", data)
+      .post("/api/category", { ...data, authorId: user?.id })
       .then(() => {
         toast.success("Created a new category!");
       })

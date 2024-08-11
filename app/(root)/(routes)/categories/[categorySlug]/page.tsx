@@ -2,10 +2,15 @@ import { SearchBox } from "@/components/ui/search-box";
 import getSingleCategory from "@/lib/actions/get-single-category";
 import { PostGrid } from "./_components/post-grid";
 import { Separator } from "@/components/ui/separator";
+import getAllUsers from "@/lib/actions/get-all-users";
 
 const CategoryPage = async ({ params }: { params: { categorySlug: string } }) => {
   const { categorySlug } = params;
+
   const category = await getSingleCategory(categorySlug);
+  const users = await getAllUsers();
+
+  const author = users?.find((user) => user.id === category?.authorId);
 
   return (
     <div className="flex flex-1 h-full">
@@ -18,7 +23,12 @@ const CategoryPage = async ({ params }: { params: { categorySlug: string } }) =>
           </div>
           <Separator orientation="vertical" />
           <aside className="space-y-4 w-1/4">
-            <h2 className="text-2xl font-semibold">Information</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold">Information</h2>
+              <p className="text-sm">
+                <span className="text-neutral-600">Author:</span> {author?.name}
+              </p>
+            </div>
             <p className="text-neutral-600">{category?.description}</p>
           </aside>
         </div>

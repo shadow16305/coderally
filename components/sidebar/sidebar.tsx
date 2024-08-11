@@ -1,9 +1,4 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { User } from "@prisma/client";
 
 import { IconBrandTabler } from "@tabler/icons-react";
 import { Bookmark, ChartBarStacked, LogIn, ThumbsUp } from "lucide-react";
@@ -12,12 +7,11 @@ import { cn } from "@/lib/utils";
 import { SidebarBody } from "./sidebar-body";
 import { SidebarLink } from "./sidebar-link";
 
-import { Button } from "../ui/button";
 import { ProfileModal } from "../modals/profile-modal";
 
 import getCurrentUser from "@/lib/actions/get-current-user";
-import { AnimatePresence, motion } from "framer-motion";
-import { useSidebar } from "@/hooks/use-sidebar";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const links = [
   {
@@ -42,21 +36,9 @@ const links = [
   },
 ];
 
-export function Sidebar({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-
-  const { data: session } = useSession();
-  const { open, animate } = useSidebar();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-    };
-
-    getUser();
-  }, []);
+export async function Sidebar({ children }: { children: React.ReactNode }) {
+  const currentUser = await getCurrentUser();
+  const session = getServerSession(authOptions);
 
   return (
     <>
@@ -84,56 +66,12 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             />
           ) : (
             <div>
-              <Button
-                variant="ghost"
-                className="flex items-center justify-start gap-2 group/sidebar p-0"
-                onClick={() => setIsOpen(!isOpen)}>
-                {user?.image ? (
-                  <div className="relative size-8">
-                    <Image src={user.image} alt="User" fill className="rounded-full" />
-                  </div>
-                ) : (
-                  <div className="relative size-8">
-                    <Image src="/images/placeholder.png" alt="User" fill className="rounded-full" />
-                  </div>
-                )}
-                {user?.name && (
-                  <motion.span
-                    animate={{
-                      display: animate ? (open ? "inline-block" : "none") : "inline-block",
-                      opacity: animate ? (open ? 1 : 0) : 1,
-                    }}
-                    className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0">
-                    {user.name}
-                  </motion.span>
-                )}
-              </Button>
+              <ProfileModal currentUser={currentUser!} />
             </div>
           )}
         </SidebarBody>
         <main className="size-full">{children}</main>
       </div>
-      <AnimatePresence mode="wait">
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.1 }}
-              className="bg-black/40 absolute top-0 left-0 w-screen h-screen z-40 overflow-hidden"
-              onClick={() => setIsOpen(false)}
-            />
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              className="z-50 absolute inset-0 size-fit m-auto">
-              <ProfileModal isOpen={isOpen} onClose={() => setIsOpen(false)} currentUser={user!} />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 }

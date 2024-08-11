@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const currentUser = await getCurrentUser();
     const body = await request.json();
 
-    const { name, description } = body;
+    const { name, description, authorId } = body;
 
     if (!currentUser?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       return new NextResponse("Category already exists", { status: 409 });
     } else {
       category = await prisma.category.create({
-        data: { name, description },
+        data: { name, description, authorId },
       });
     }
 
