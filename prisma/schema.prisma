@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id             String     @id @default(uuid()) @map("_id")
-  email          String     @unique
-  name           String
-  image          String?
-  hashedPassword String?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  posts          Post[]
-  savedPosts     Bookmark[]
-  categories     Category[]
+  id                 String             @id @default(uuid()) @map("_id")
+  email              String             @unique
+  name               String
+  image              String?
+  hashedPassword     String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  posts              Post[]
+  savedPosts         Bookmark[]
+  categories         Category[]
+  followedCategories CategoryFollower[]
 }
 
 model Post {
@@ -37,13 +38,13 @@ model Post {
 }
 
 model Category {
-  id          String @id @default(uuid()) @map("_id")
+  id          String             @id @default(uuid()) @map("_id")
   name        String
   posts       Post[]
   description String
-  followers   Int?
   authorId    String
-  author      User   @relation(fields: [authorId], references: [id])
+  author      User               @relation(fields: [authorId], references: [id])
+  followers   CategoryFollower[]
 }
 
 model Bookmark {
@@ -55,4 +56,15 @@ model Bookmark {
   post      Post     @relation(fields: [postId], references: [id])
 
   @@unique([userId, postId])
+}
+
+model CategoryFollower {
+  id         String   @id @default(uuid()) @map("_id")
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  followedAt DateTime @default(now())
+
+  @@unique([userId, categoryId])
 }

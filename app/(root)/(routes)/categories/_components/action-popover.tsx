@@ -3,19 +3,27 @@
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { CategoryFollower } from "@prisma/client";
 import axios from "axios";
 import { EllipsisVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
 
 interface ActionPopoverProps {
   categoryId: string;
   authorId: string;
   userId: string;
+  categoryFollower: CategoryFollower[];
 }
 
-export const ActionPopover = ({ categoryId, authorId, userId }: ActionPopoverProps) => {
+export const ActionPopover = ({ categoryId, authorId, userId, categoryFollower }: ActionPopoverProps) => {
   const router = useRouter();
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    setIsFollowing(categoryFollower.some((follower) => follower.userId === userId));
+  }, [categoryFollower, userId]);
 
   const handleDelete = async () => {
     axios
@@ -31,13 +39,51 @@ export const ActionPopover = ({ categoryId, authorId, userId }: ActionPopoverPro
       });
   };
 
+  const handleFollow = async () => {
+    await axios
+      .post("/api/category/follow", { categoryId })
+      .then(() => {
+        setIsFollowing(true);
+        toast.success("Followed!");
+      })
+      .catch(() => {
+        toast.error("Failed to follow category.");
+      })
+      .finally(() => {
+        router.refresh();
+      });
+  };
+
+  const handleUnfollow = async () => {
+    await axios
+      .delete("/api/category/follow", { data: { categoryId } })
+      .then(() => {
+        setIsFollowing(false);
+        toast.success("Unfollowed!");
+      })
+      .catch(() => {
+        toast.error("Failed to unfollow category.");
+      })
+      .finally(() => {
+        router.refresh();
+      });
+  };
+
   return (
     <Popover>
       <PopoverTrigger>
         <EllipsisVertical size={16} className="hover:text-red-500 transition-colors" />
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0">
-        <Button variant="ghost">Follow</Button>
+        {isFollowing ? (
+          <Button variant="ghost" onClick={handleUnfollow}>
+            Unfollow
+          </Button>
+        ) : (
+          <Button variant="ghost" onClick={handleFollow}>
+            Follow
+          </Button>
+        )}
         <Separator />
         {authorId === userId && (
           <Button variant="destructive" className="rounded-t-none" onClick={handleDelete}>
