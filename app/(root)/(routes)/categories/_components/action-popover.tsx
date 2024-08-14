@@ -14,16 +14,16 @@ interface ActionPopoverProps {
   categoryId: string;
   authorId: string;
   userId: string;
-  categoryFollower: CategoryFollower[];
+  categoryFollowers: CategoryFollower[];
 }
 
-export const ActionPopover = ({ categoryId, authorId, userId, categoryFollower }: ActionPopoverProps) => {
+export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers }: ActionPopoverProps) => {
   const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
-    setIsFollowing(categoryFollower.some((follower) => follower.userId === userId));
-  }, [categoryFollower, userId]);
+    setIsFollowing(categoryFollowers.some((follower) => follower.userId === userId));
+  }, [categoryFollowers, userId]);
 
   const handleDelete = async () => {
     axios

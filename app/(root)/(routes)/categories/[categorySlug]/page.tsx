@@ -3,12 +3,17 @@ import getSingleCategory from "@/lib/actions/get-single-category";
 import { PostGrid } from "./_components/post-grid";
 import { Separator } from "@/components/ui/separator";
 import getAllUsers from "@/lib/actions/get-all-users";
+import { CategoryInfo } from "./_components/category-info";
+import getCurrentUser from "@/lib/actions/get-current-user";
+import getFollowedCategories from "@/lib/actions/get-followed-categories";
 
 const CategoryPage = async ({ params }: { params: { categorySlug: string } }) => {
   const { categorySlug } = params;
 
   const category = await getSingleCategory(categorySlug);
   const users = await getAllUsers();
+  const currentUser = await getCurrentUser();
+  const categoryFollowers = await getFollowedCategories();
 
   const author = users?.find((user) => user.id === category?.authorId);
 
@@ -22,15 +27,12 @@ const CategoryPage = async ({ params }: { params: { categorySlug: string } }) =>
             {category?.posts && <PostGrid posts={category?.posts} categoryId={category.id} />}
           </div>
           <Separator orientation="vertical" />
-          <aside className="space-y-4 w-1/4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Information</h2>
-              <p className="text-sm">
-                <span className="text-neutral-600">Author:</span> {author?.name}
-              </p>
-            </div>
-            <p className="text-neutral-600">{category?.description}</p>
-          </aside>
+          <CategoryInfo
+            category={category}
+            author={author}
+            userId={currentUser!.id}
+            categoryFollowers={categoryFollowers.filter((follower) => follower.categoryId === category!.id)}
+          />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Category, CategoryFollower, User } from "@prisma/client";
+import { Category, CategoryFollower } from "@prisma/client";
 import Link from "next/link";
 import { ActionPopover } from "./action-popover";
 
@@ -22,7 +22,7 @@ export const CategoryGrid = ({ categories, userId, categoryFollowers }: Category
               categoryId={category.id}
               authorId={category.authorId}
               userId={userId}
-              categoryFollower={categoryFollowers.filter((follower) => follower.categoryId === category.id)}
+              categoryFollowers={categoryFollowers.filter((follower) => follower.categoryId === category.id)}
             />
           </div>
         </div>

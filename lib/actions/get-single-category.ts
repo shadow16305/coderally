@@ -10,6 +10,9 @@ const getSingleCategory = async (categoryName: string) => {
       },
       include: {
         posts: true,
+        _count: {
+          select: { followers: true },
+        },
       },
     });
     return category;
