@@ -1,14 +1,16 @@
 import { Category, CategoryFollower } from "@prisma/client";
 import Link from "next/link";
 import { ActionPopover } from "./action-popover";
+import { Session } from "next-auth";
 
 interface CategoryGridProps {
   categories: (Category & { _count: { followers: number } })[];
-  userId: string;
+  userId: string | undefined;
   categoryFollowers: CategoryFollower[];
+  isLoggedIn: Session | null;
 }
 
-export const CategoryGrid = ({ categories, userId, categoryFollowers }: CategoryGridProps) => {
+export const CategoryGrid = ({ categories, userId, categoryFollowers, isLoggedIn }: CategoryGridProps) => {
   return (
     <section className="flex flex-wrap gap-4">
       {categories.map((category) => (
@@ -23,6 +25,7 @@ export const CategoryGrid = ({ categories, userId, categoryFollowers }: Category
               authorId={category.authorId}
               userId={userId}
               categoryFollowers={categoryFollowers.filter((follower) => follower.categoryId === category.id)}
+              isLoggedIn={isLoggedIn}
             />
           </div>
         </div>

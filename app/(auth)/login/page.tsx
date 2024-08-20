@@ -5,9 +5,9 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
+import toast from "react-hot-toast";
 
 interface LoginFormInputs {
   email: string;
@@ -30,6 +30,18 @@ export default function Login() {
       }
 
       if (callback?.ok && !callback?.error) {
+        router.push("/");
+      }
+    });
+  };
+
+  const socialAction = (action: string) => {
+    signIn(action, { redirect: false }).then((callback) => {
+      if (callback?.error) {
+        toast.error("Invalid credentials");
+      }
+      if (callback?.ok && !callback?.error) {
+        toast.success("Logged in!");
         router.push("/");
       }
     });
@@ -68,10 +80,10 @@ export default function Login() {
           Sign in
         </Button>
         <div className="flex items-center gap-x-2 w-full">
-          <Button type="button" onClick={() => signIn("google")} className="w-1/2">
+          <Button type="button" onClick={() => socialAction("google")} className="w-1/2">
             <IconBrandGoogle />
           </Button>
-          <Button type="button" onClick={() => signIn("github")} className="w-1/2">
+          <Button type="button" onClick={() => socialAction("github")} className="w-1/2">
             <IconBrandGithub />
           </Button>
         </div>

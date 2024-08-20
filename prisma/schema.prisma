@@ -19,6 +19,29 @@ model User {
   savedPosts         Bookmark[]
   categories         Category[]
   followedCategories CategoryFollower[]
+  Account            Account[]
+  emailVerified      DateTime?
+  comments           Comment[]
+}
+
+model Account {
+  id                String    @id @default(uuid()) @map("_id")
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?   @db.String
+  access_token      String?   @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?   @db.String
+  session_state     String?
+  emailVerified     DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Post {
@@ -33,6 +56,7 @@ model Post {
   categoryId String
   category   Category   @relation(fields: [categoryId], references: [id])
   savedPosts Bookmark[]
+  comments   Comment[]
 
   @@index([categoryId])
 }
@@ -67,4 +91,15 @@ model CategoryFollower {
   followedAt DateTime @default(now())
 
   @@unique([userId, categoryId])
+}
+
+model Comment {
+  id        String   @id @default(uuid()) @map("_id")
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
 }

@@ -1,5 +1,3 @@
-import { useSession } from "next-auth/react";
-
 import { IconBrandTabler } from "@tabler/icons-react";
 import { Bookmark, ChartBarStacked, LogIn, ThumbsUp } from "lucide-react";
 
@@ -38,7 +36,7 @@ const links = [
 
 export async function Sidebar({ children }: { children: React.ReactNode }) {
   const currentUser = await getCurrentUser();
-  const session = getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
   return (
     <>

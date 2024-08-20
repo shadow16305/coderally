@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { signIn } from "next-auth/react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const [error, setError] = useState<string>();
@@ -25,6 +26,18 @@ export default function Register() {
     } catch {
       setError("User already exists!");
     }
+  };
+
+  const socialAction = (action: string) => {
+    signIn(action, { redirect: false }).then((callback) => {
+      if (callback?.error) {
+        toast.error("Invalid credentials");
+      }
+      if (callback?.ok && !callback?.error) {
+        toast.success("Signed up!");
+        router.push("/");
+      }
+    });
   };
 
   return (
@@ -68,10 +81,10 @@ export default function Register() {
           Sign up
         </Button>
         <div className="flex items-center gap-x-2 w-full">
-          <Button type="button" onClick={() => signIn("google")} className="w-1/2">
+          <Button type="button" onClick={() => socialAction("google")} className="w-1/2">
             <IconBrandGoogle />
           </Button>
-          <Button type="button" onClick={() => signIn("github")} className="w-1/2">
+          <Button type="button" onClick={() => socialAction("github")} className="w-1/2">
             <IconBrandGithub />
           </Button>
         </div>

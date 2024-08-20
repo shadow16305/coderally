@@ -9,17 +9,22 @@ import { EllipsisVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
+import { Session } from "next-auth";
+import Link from "next/link";
 
 interface ActionPopoverProps {
   categoryId: string;
   authorId: string;
-  userId: string;
+  userId: string | undefined;
   categoryFollowers: CategoryFollower[];
+  isLoggedIn: Session | null;
 }
 
-export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers }: ActionPopoverProps) => {
+export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers, isLoggedIn }: ActionPopoverProps) => {
   const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     setIsFollowing(categoryFollowers.some((follower) => follower.userId === userId));
@@ -79,14 +84,18 @@ export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers 
           <Button variant="ghost" onClick={handleUnfollow}>
             Unfollow
           </Button>
-        ) : (
+        ) : isLoggedIn ? (
           <Button variant="ghost" onClick={handleFollow}>
             Follow
+          </Button>
+        ) : (
+          <Button variant="ghost" onClick={() => router.push("/login")}>
+            Log in to follow
           </Button>
         )}
         <Separator />
         {authorId === userId && (
-          <Button variant="destructive" className="rounded-t-none" onClick={handleDelete}>
+          <Button variant="destructive" className="rounded-t-none w-full" onClick={handleDelete}>
             Delete
           </Button>
         )}
