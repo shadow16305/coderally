@@ -23,7 +23,8 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
         </div>
         <div className="flex justify-between h-[91%]">
           <div className="w-8/12">
-            <p>{post?.content}</p>
+            <p className="pb-4">{post?.content}</p>
+            <Separator />
             <CommentGrid />
           </div>
           <Separator orientation="vertical" />
