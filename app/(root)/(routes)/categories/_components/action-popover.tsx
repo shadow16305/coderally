@@ -3,28 +3,27 @@
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-import { CategoryFollower } from "@prisma/client";
+import { Category, CategoryFollower } from "@prisma/client";
 import axios from "axios";
 import { EllipsisVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import { Session } from "next-auth";
-import Link from "next/link";
+import { DeleteModal } from "@/components/modals/delete-modal";
 
 interface ActionPopoverProps {
-  categoryId: string;
+  category: Category;
   authorId: string;
   userId: string | undefined;
   categoryFollowers: CategoryFollower[];
   isLoggedIn: Session | null;
 }
 
-export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers, isLoggedIn }: ActionPopoverProps) => {
-  const router = useRouter();
+export const ActionPopover = ({ category, authorId, userId, categoryFollowers, isLoggedIn }: ActionPopoverProps) => {
   const [isFollowing, setIsFollowing] = useState(false);
-
-  useEffect(() => {}, []);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsFollowing(categoryFollowers.some((follower) => follower.userId === userId));
@@ -32,7 +31,7 @@ export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers,
 
   const handleDelete = async () => {
     axios
-      .delete("/api/category", { data: { id: categoryId } })
+      .delete("/api/category", { data: { id: category.id } })
       .then(() => {
         toast.success("Category deleted.");
       })
@@ -46,7 +45,7 @@ export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers,
 
   const handleFollow = async () => {
     await axios
-      .post("/api/category/follow", { categoryId })
+      .post("/api/category/follow", { data: { categoryId: category?.id } })
       .then(() => {
         setIsFollowing(true);
         toast.success("Followed!");
@@ -61,7 +60,7 @@ export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers,
 
   const handleUnfollow = async () => {
     await axios
-      .delete("/api/category/follow", { data: { categoryId } })
+      .delete("/api/category/follow", { data: { categoryId: category?.id } })
       .then(() => {
         setIsFollowing(false);
         toast.success("Unfollowed!");
@@ -75,31 +74,40 @@ export const ActionPopover = ({ categoryId, authorId, userId, categoryFollowers,
   };
 
   return (
-    <Popover>
-      <PopoverTrigger>
-        <EllipsisVertical size={16} className="hover:text-red-500 transition-colors" />
-      </PopoverTrigger>
-      <PopoverContent className="w-fit p-0">
-        {isFollowing ? (
-          <Button variant="ghost" onClick={handleUnfollow}>
-            Unfollow
-          </Button>
-        ) : isLoggedIn ? (
-          <Button variant="ghost" onClick={handleFollow}>
-            Follow
-          </Button>
-        ) : (
-          <Button variant="ghost" onClick={() => router.push("/login")}>
-            Log in to follow
-          </Button>
-        )}
-        <Separator />
-        {authorId === userId && (
-          <Button variant="destructive" className="rounded-t-none w-full" onClick={handleDelete}>
-            Delete
-          </Button>
-        )}
-      </PopoverContent>
-    </Popover>
+    <>
+      <Popover>
+        <PopoverTrigger>
+          <EllipsisVertical size={16} className="hover:text-red-500 transition-colors" />
+        </PopoverTrigger>
+        <PopoverContent className="w-fit p-0">
+          {isFollowing ? (
+            <Button variant="ghost" onClick={handleUnfollow}>
+              Unfollow
+            </Button>
+          ) : isLoggedIn ? (
+            <Button variant="ghost" onClick={handleFollow}>
+              Follow
+            </Button>
+          ) : (
+            <Button variant="ghost" onClick={() => router.push("/login")}>
+              Log in to follow
+            </Button>
+          )}
+          <Separator />
+          {authorId === userId && (
+            <Button variant="destructive" className="rounded-t-none w-full" onClick={() => setDeleteModalOpen(true)}>
+              Delete
+            </Button>
+          )}
+        </PopoverContent>
+      </Popover>
+      <DeleteModal
+        category={category}
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onDelete={handleDelete}
+        variant="category"
+      />
+    </>
   );
 };

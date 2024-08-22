@@ -21,7 +21,7 @@ export const CategoryGrid = ({ categories, userId, categoryFollowers, isLoggedIn
               <span className="text-xs text-neutral-600">Followers: {category._count.followers} </span>
             </Link>
             <ActionPopover
-              categoryId={category.id}
+              category={category}
               authorId={category.authorId}
               userId={userId}
               categoryFollowers={categoryFollowers.filter((follower) => follower.categoryId === category.id)}

@@ -17,9 +17,9 @@ interface CategoryInfoProps {
 }
 
 export const CategoryInfo = ({ category, author, userId, categoryFollowers }: CategoryInfoProps) => {
-  const router = useRouter();
   const [isFollowing, setIsFollowing] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsFollowing(categoryFollowers.some((follower) => follower.userId === userId));
@@ -55,6 +55,20 @@ export const CategoryInfo = ({ category, author, userId, categoryFollowers }: Ca
       });
   };
 
+  const handleDelete = async () => {
+    axios
+      .delete("/api/category", { data: { id: category?.id } })
+      .then(() => {
+        toast.success("Category deleted.");
+      })
+      .catch(() => {
+        toast.error("Failed to delete category.");
+      })
+      .finally(() => {
+        router.refresh();
+      });
+  };
+
   const isAuthor = author?.id === userId;
 
   return (
@@ -84,7 +98,13 @@ export const CategoryInfo = ({ category, author, userId, categoryFollowers }: Ca
           )}
         </div>
       </aside>
-      <DeleteModal category={category} open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} />
+      <DeleteModal
+        category={category}
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onDelete={handleDelete}
+        variant="category"
+      />
     </>
   );
 };
