@@ -15,18 +15,24 @@ interface DeleteModalProps {
   open: boolean;
   onClose: () => void;
   onDelete: () => void;
-  variant: string;
+  variant: "post" | "category" | "comment";
 }
 
 export const DeleteModal = ({ category, onClose, open, onDelete, variant }: DeleteModalProps) => {
+  const variantLabels: { [key in DeleteModalProps["variant"]]: string } = {
+    post: "post",
+    category: "category",
+    comment: "comment",
+  };
+
+  const variantLabel = variantLabels[variant];
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader className="space-y-4">
           <DialogTitle>Delete {category?.name}</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this {variant === "post" ? "post" : "category"}
-          </DialogDescription>
+          <DialogDescription>Are you sure you want to delete this {variantLabel}?</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="secondary" className="w-1/2" onClick={onClose}>
@@ -39,7 +45,7 @@ export const DeleteModal = ({ category, onClose, open, onDelete, variant }: Dele
               </Button>
             </Link>
           ) : (
-            <Button variant="destructive" className="w-full" onClick={onDelete}>
+            <Button variant="destructive" className="w-1/2" onClick={onDelete}>
               Delete
             </Button>
           )}

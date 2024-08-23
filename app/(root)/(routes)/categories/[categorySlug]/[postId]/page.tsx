@@ -4,11 +4,22 @@ import { CommentGrid } from "./_components/comment-grid";
 import { Separator } from "@/components/ui/separator";
 import getAllUsers from "@/lib/actions/get-all-users";
 import Image from "next/image";
+import getPosts from "@/lib/actions/get-posts";
+import { PostCard } from "@/components/posts/post-card";
+import getComments from "@/lib/actions/get-comments";
+import getCurrentUser from "@/lib/actions/get-current-user";
 
 const PostPage = async ({ params }: { params: { postId: string } }) => {
   const post = (await getSinglePost(params.postId)) as Post | null;
   const users = await getAllUsers();
+  const posts = await getPosts();
+  const comments = await getComments(params.postId);
+  const currentUser = await getCurrentUser();
+
   const author = users?.find((user) => post?.authorId === user.id);
+  const filteredPosts = posts.filter(
+    (postItem) => postItem.categoryId === post?.categoryId && postItem.id != params.postId
+  );
 
   return (
     <div className="flex flex-1 h-full">
@@ -22,12 +33,27 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
           <h1 className="font-semibold text-4xl">{post?.title}</h1>
         </div>
         <div className="flex justify-between h-[91%]">
-          <div className="w-8/12">
-            <p className="pb-4">{post?.content}</p>
+          <div className="w-8/12 space-y-4">
+            <p>{post?.content}</p>
             <Separator />
-            <CommentGrid />
+            <CommentGrid postId={params.postId} comments={comments} users={users!} currentUser={currentUser!} />
           </div>
           <Separator orientation="vertical" />
+          <aside className="space-y-4 w-[29%]">
+            <h2 className="text-2xl font-semibold">Other posts</h2>
+            <div className="flex flex-col gap-y-4">
+              {filteredPosts.slice(0, 4).map((postItem) => (
+                <PostCard
+                  key={postItem.id}
+                  id={postItem.id}
+                  title={postItem.title}
+                  content={postItem.content}
+                  categoryId={postItem.categoryId}
+                  author={postItem.author.id}
+                />
+              ))}
+            </div>
+          </aside>
         </div>
       </div>
     </div>

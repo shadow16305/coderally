@@ -2,12 +2,11 @@ import getCurrentUser from "@/lib/actions/get-current-user";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prismadb";
 
-export async function DELETE(request: Request) {
+export async function DELETE({ params }: { params: { postId: string } }) {
   try {
     const currentUser = await getCurrentUser();
-    const body = await request.json();
 
-    const { id } = body;
+    const { postId } = params;
 
     if (!currentUser?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -15,7 +14,7 @@ export async function DELETE(request: Request) {
 
     const existingPost = await prisma.post.findUnique({
       where: {
-        id,
+        id: postId,
       },
     });
 
@@ -29,7 +28,7 @@ export async function DELETE(request: Request) {
 
     const deletedPost = await prisma.post.delete({
       where: {
-        id,
+        id: postId,
       },
     });
 
