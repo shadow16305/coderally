@@ -22,6 +22,7 @@ model User {
   Account            Account[]
   emailVerified      DateTime?
   comments           Comment[]
+  replies            Reply[]
 }
 
 model Account {
@@ -102,4 +103,21 @@ model Comment {
   author    User     @relation(fields: [authorId], references: [id])
   postId    String
   post      Post     @relation(fields: [postId], references: [id])
+  replies   Reply[]  @relation("CommentReplies")
+}
+
+model Reply {
+  id        String   @id @default(uuid()) @map("_id")
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade, name: "CommentReplies")
+  parentId  String?
+  parent    Reply?   @relation("ReplyToReply", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Reply[]  @relation("ReplyToReply")
+
+  @@index([commentId])
 }
