@@ -23,7 +23,7 @@ export const CommentGrid = ({ postId, comments, users, currentUser }: CommentGri
   return (
     <>
       <CommentForm postId={postId} currentUser={currentUser} />
-      <ScrollArea className="w-full h-full pb-10 pr-10">
+      <ScrollArea className="w-full h-3/4 pb-10 pr-10">
         <div className="flex flex-col gap-y-4">
           {commentItems.map(({ comment, author }) => (
             <CommentItem key={comment.id} author={author!} comment={comment} currentUser={currentUser} />

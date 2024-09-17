@@ -10,6 +10,9 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { DeleteModal } from "@/components/modals/delete-modal";
 import { ReplyWithChildren } from "@/types";
+import { Replies } from "./replies";
+import { ReplyField } from "./reply-field";
+import { FieldValues, SubmitHandler } from "react-hook-form";
 
 interface CommentItemProps {
   comment: Comment;
@@ -20,34 +23,18 @@ interface CommentItemProps {
 export const CommentItem = ({ comment, author, currentUser }: CommentItemProps) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [replies, setReplies] = useState<ReplyWithChildren[]>([]);
+  const [replyFieldOpen, setReplyFieldOpen] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchReplies = async () => {
-      const commentReplies = await getCommentReplies(comment.id);
-      setReplies(commentReplies);
-    };
-    fetchReplies();
-  }, []);
-
-  const handleReply = async (content: string, parentId?: string) => {
-    axios
-      .post("/api/comment/reply", {
-        content,
-        authorId: currentUser.id,
-        commentId: comment.id,
-        parentId,
-      })
-      .then(() => {
-        toast.success("Reply posted!");
-      })
-      .catch(() => {
-        toast.error("Failed to post reply :(");
-      })
-      .finally(() => {
-        router.refresh();
-      });
+  const fetchReplies = async () => {
+    const commentReplies = await getCommentReplies(comment.id);
+    setReplies(commentReplies);
   };
+
+  useEffect(() => {
+    fetchReplies();
+  }, [comment.id]);
 
   const deleteHandler = async () => {
     axios
@@ -63,28 +50,27 @@ export const CommentItem = ({ comment, author, currentUser }: CommentItemProps) 
       });
   };
 
-  const renderReplies = (reply: ReplyWithChildren) => (
-    <div key={reply.id} className="pl-6 border-l border-neutral-300 my-4 flex justify-between">
-      <div className="flex flex-col gap-y-2">
-        <div className="flex items-center gap-x-1">
-          <div className="size-8 relative">
-            <Image
-              src={author.image || "/default-avatar.png"}
-              alt={author.name}
-              fill
-              className="rounded-full object-cover"
-            />
-          </div>
-          <span>{author.name}</span>
-        </div>
-        <p className="text-gray-700">{reply.content}</p>
-      </div>
-      <Button size="sm" onClick={() => handleReply("Replying to this comment", reply.id)}>
-        Reply
-      </Button>
-      {reply.children?.map((childReply) => renderReplies(childReply))}
-    </div>
-  );
+  const handleReply: SubmitHandler<FieldValues> = async (data) => {
+    axios
+      .post("/api/comment/reply", {
+        content: data.content,
+        authorId: currentUser.id,
+        commentId: comment.id,
+        parentId: null,
+      })
+      .then(() => {
+        toast.success("Reply posted!");
+      })
+      .catch(() => {
+        toast.error("Failed to post reply :(");
+      })
+      .finally(() => {
+        router.refresh();
+        fetchReplies();
+        setReplyFieldOpen(false);
+        setShowReplies(true);
+      });
+  };
 
   return (
     <div className="p-4 border-b">
@@ -111,13 +97,19 @@ export const CommentItem = ({ comment, author, currentUser }: CommentItemProps) 
               </Button>
             </>
           )}
-          <Button size="sm" onClick={() => handleReply("Replying to this comment")}>
-            Reply
+          <Button size="sm" onClick={() => setReplyFieldOpen(!replyFieldOpen)}>
+            {replyFieldOpen ? "Cancel" : "Reply"}
           </Button>
         </div>
       </div>
-      <p className="text-gray-700">{comment.content}</p>
-      <div className="mt-4">{replies.map((reply) => renderReplies(reply))}</div>
+      <p className="text-gray-700 mt-4">{comment.content}</p>
+      {replyFieldOpen && <ReplyField onSubmit={handleReply} />}
+      {showReplies && <Replies replies={replies} commentId={comment.id} fetchReplies={fetchReplies} />}
+      {replies.length > 0 && (
+        <Button type="button" variant="ghost" onClick={() => setShowReplies(!showReplies)} className="w-full">
+          {showReplies ? "Hide replies" : `Show replies (${replies.length})`}
+        </Button>
+      )}
       <DeleteModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
