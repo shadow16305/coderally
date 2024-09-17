@@ -42,7 +42,6 @@ export async function DELETE(request: Request) {
   try {
     const currentUser = await getCurrentUser();
     const body = await request.json();
-
     const { id } = body;
 
     if (!currentUser?.id) {
@@ -50,9 +49,7 @@ export async function DELETE(request: Request) {
     }
 
     const existingCategory = await prisma.category.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     if (!existingCategory) {
@@ -63,10 +60,24 @@ export async function DELETE(request: Request) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
+    await prisma.reply.deleteMany({
+      where: { comment: { post: { categoryId: id } } },
+    });
+
+    await prisma.comment.deleteMany({
+      where: { post: { categoryId: id } },
+    });
+
+    await prisma.post.deleteMany({
+      where: { categoryId: id },
+    });
+
+    await prisma.categoryFollower.deleteMany({
+      where: { categoryId: id },
+    });
+
     const deletedCategory = await prisma.category.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     return NextResponse.json(deletedCategory);
