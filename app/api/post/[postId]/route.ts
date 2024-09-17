@@ -1,12 +1,16 @@
 import getCurrentUser from "@/lib/actions/get-current-user";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prismadb";
 
-export async function DELETE({ params }: { params: { postId: string } }) {
+export async function DELETE(req: NextRequest) {
   try {
     const currentUser = await getCurrentUser();
+    const { searchParams } = new URL(req.url);
+    const postId = searchParams.get("postId");
 
-    const { postId } = params;
+    if (!postId) {
+      return new NextResponse("Post ID is required", { status: 400 });
+    }
 
     if (!currentUser?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -34,7 +38,7 @@ export async function DELETE({ params }: { params: { postId: string } }) {
 
     return NextResponse.json(deletedPost);
   } catch (error: any) {
-    console.error("Error deleting category:", error);
+    console.error("Error deleting post:", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
