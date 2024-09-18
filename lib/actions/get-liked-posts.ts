@@ -1,10 +1,19 @@
 "use server";
 
 import prisma from "@/lib/prismadb";
+import getCurrentUser from "./get-current-user";
 
-const getPosts = async () => {
+const getLikedPosts = async () => {
   try {
+    const currentUser = await getCurrentUser();
     const posts = await prisma.post.findMany({
+      where: {
+        likes: {
+          some: {
+            userId: currentUser?.id,
+          },
+        },
+      },
       include: {
         author: true,
         category: true,
@@ -18,4 +27,4 @@ const getPosts = async () => {
   }
 };
 
-export default getPosts;
+export default getLikedPosts;

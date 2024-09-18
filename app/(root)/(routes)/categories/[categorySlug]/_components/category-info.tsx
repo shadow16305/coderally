@@ -1,6 +1,7 @@
 "use client";
 
 import { DeleteModal } from "@/components/modals/delete-modal";
+import { PostModal } from "@/components/modals/post-modal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Category, CategoryFollower, User } from "@prisma/client";
@@ -19,6 +20,7 @@ interface CategoryInfoProps {
 export const CategoryInfo = ({ category, author, userId, categoryFollowers }: CategoryInfoProps) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [postModalOpen, setPostModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -83,11 +85,15 @@ export const CategoryInfo = ({ category, author, userId, categoryFollowers }: Ca
         <p className="text-neutral-600">{category?.description}</p>
         <div className="flex items-center gap-x-4">
           {isFollowing ? (
-            <Button className={cn("w-1/2", !isAuthor && "w-full")} onClick={handleUnfollow}>
+            <Button
+              type="button"
+              className={cn("w-1/2", !isAuthor && "w-full")}
+              variant="secondary"
+              onClick={handleUnfollow}>
               Unfollow
             </Button>
           ) : (
-            <Button className={cn("w-1/2", !isAuthor && "w-full")} onClick={handleFollow}>
+            <Button type="button" className={cn("w-1/2", !isAuthor && "w-full")} onClick={handleFollow}>
               Follow
             </Button>
           )}
@@ -97,6 +103,9 @@ export const CategoryInfo = ({ category, author, userId, categoryFollowers }: Ca
             </Button>
           )}
         </div>
+        <Button type="button" className="w-full" onClick={() => setPostModalOpen(true)}>
+          Post +
+        </Button>
       </aside>
       <DeleteModal
         category={category}
@@ -105,6 +114,7 @@ export const CategoryInfo = ({ category, author, userId, categoryFollowers }: Ca
         onDelete={handleDelete}
         variant="category"
       />
+      <PostModal open={postModalOpen} onClose={() => setPostModalOpen(false)} />
     </>
   );
 };

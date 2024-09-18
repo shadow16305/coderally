@@ -23,13 +23,8 @@ const links = [
     icon: <ChartBarStacked className="text-green-500 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
   },
   {
-    label: "Saved Posts",
-    href: "#",
-    icon: <Bookmark className="text-yellow-500 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-  },
-  {
     label: "Liked Posts",
-    href: "#",
+    href: "/liked",
     icon: <ThumbsUp className="text-blue-500 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
   },
 ];

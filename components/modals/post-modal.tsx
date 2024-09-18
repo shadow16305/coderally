@@ -14,7 +14,7 @@ import { CategorySelect } from "../posts/category-select";
 import { Category } from "@prisma/client";
 import { useEffect, useState } from "react";
 import getCurrentUser from "@/lib/actions/get-current-user";
-import { useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface PostModalProps {
@@ -28,12 +28,22 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
   const [categoryValue, setCategoryValue] = useState("");
 
   const router = useRouter();
+  const pathname = usePathname();
+  const { categorySlug } = useParams();
 
-  const { register, handleSubmit } = useForm<FieldValues>();
+  const { register, handleSubmit, reset } = useForm<FieldValues>();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const currentUser = await getCurrentUser();
-    const categoryId = categories?.find((category) => category.name === categoryValue)?.id;
+    let categoryId: string | undefined;
+
+    if (pathname === "/") {
+      const selectedCategory = categories?.find((category) => category.name === categoryValue);
+      categoryId = selectedCategory?.id;
+    } else {
+      const slugCategory = categories?.find((category) => category.name === categorySlug);
+      categoryId = slugCategory?.id;
+    }
     axios
       .post("/api/post", {
         ...data,
@@ -47,6 +57,7 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
         toast.error("Failed to create a post :(");
       })
       .finally(() => {
+        reset();
         router.refresh();
         onClose();
       });
@@ -81,25 +92,27 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
                   </Label>
                   <Textarea id="content" {...register("content")} data-test="post-content-input" />
                 </div>
-                <div>
-                  <span className="font-medium text-base">Category</span>
-                  <div className="flex items-center gap-x-4">
-                    <CategorySelect
-                      categories={categories}
-                      value={categoryValue}
-                      setValue={setCategoryValue}
-                      data-test="post-category-select"
-                    />
-                    <span>or</span>
-                    <Button
-                      variant="secondary"
-                      onClick={() => setCategoryModalOpen(true)}
-                      type="button"
-                      data-test="post-create-category">
-                      Create category
-                    </Button>
+                {pathname === "/" && (
+                  <div>
+                    <span className="font-medium text-base">Category</span>
+                    <div className="flex items-center gap-x-4">
+                      <CategorySelect
+                        categories={categories}
+                        value={categoryValue}
+                        setValue={setCategoryValue}
+                        data-test="post-category-select"
+                      />
+                      <span>or</span>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setCategoryModalOpen(true)}
+                        type="button"
+                        data-test="post-create-category">
+                        Create category
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
                 <Button type="submit" data-test="post-submit">
                   Post
                 </Button>

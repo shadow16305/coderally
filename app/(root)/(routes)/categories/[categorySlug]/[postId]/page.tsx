@@ -50,6 +50,7 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
                   content={postItem.content}
                   categoryId={postItem.categoryId}
                   author={postItem.author.id}
+                  likes={postItem.likes}
                 />
               ))}
             </div>

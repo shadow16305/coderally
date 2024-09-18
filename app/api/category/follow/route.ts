@@ -7,7 +7,7 @@ export async function POST(request: Request) {
     const currentUser = await getCurrentUser();
     const body = await request.json();
 
-    const { categoryId } = body;
+    const categoryId = body.categoryId || body.data?.categoryId;
 
     if (!currentUser?.id) {
       return new NextResponse("Unauthorized", { status: 401 });

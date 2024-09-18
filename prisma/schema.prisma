@@ -23,6 +23,7 @@ model User {
   emailVerified      DateTime?
   comments           Comment[]
   replies            Reply[]
+  likes              Like[]
 }
 
 model Account {
@@ -58,6 +59,7 @@ model Post {
   category   Category   @relation(fields: [categoryId], references: [id])
   savedPosts Bookmark[]
   comments   Comment[]
+  likes      Like[]
 
   @@index([categoryId])
 }
@@ -120,4 +122,15 @@ model Reply {
   children  Reply[]  @relation("ReplyToReply")
 
   @@index([commentId])
+}
+
+model Like {
+  id        String   @id @default(uuid()) @map("_id")
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
 }
