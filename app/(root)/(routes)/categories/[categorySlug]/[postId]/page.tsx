@@ -34,7 +34,7 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
         </div>
         <div className="flex justify-between h-[91%]">
           <div className="w-8/12 space-y-4">
-            <p>{post?.content}</p>
+            <div dangerouslySetInnerHTML={{ __html: post!.content }} />
             <Separator />
             <CommentGrid postId={params.postId} comments={comments} users={users!} currentUser={currentUser!} />
           </div>

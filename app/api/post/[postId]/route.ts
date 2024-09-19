@@ -73,6 +73,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { postId: s
       return new NextResponse("Forbidden", { status: 403 });
     }
 
+    await prisma.comment.deleteMany({
+      where: { post: { categoryId: existingPost.categoryId } },
+    });
+
     const deletedPost = await prisma.post.delete({
       where: {
         id: postId,

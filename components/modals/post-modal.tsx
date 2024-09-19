@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import getCurrentUser from "@/lib/actions/get-current-user";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import PostEditor from "../posts/post-editor";
 
 interface PostModalProps {
   open: boolean;
@@ -26,6 +27,7 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
   const [categories, setCategories] = useState<Category[]>();
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [categoryValue, setCategoryValue] = useState("");
+  const [content, setContent] = useState("");
 
   const router = useRouter();
   const pathname = usePathname();
@@ -47,6 +49,7 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
     axios
       .post("/api/post", {
         ...data,
+        content,
         categoryId,
         authorId: currentUser?.id,
       })
@@ -90,7 +93,7 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
                   <Label htmlFor="content" className="text-base">
                     Content
                   </Label>
-                  <Textarea id="content" {...register("content")} data-test="post-content-input" />
+                  <PostEditor onChange={setContent} />
                 </div>
                 {pathname === "/" && (
                   <div>

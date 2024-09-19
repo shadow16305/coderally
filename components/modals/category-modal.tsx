@@ -30,7 +30,7 @@ export const CategoryModal = ({ open, onClose }: CategoryModalProps) => {
     getUser();
   }, []);
 
-  const { register, handleSubmit } = useForm<FieldValues>();
+  const { register, handleSubmit, reset } = useForm<FieldValues>();
 
   const router = useRouter();
 
@@ -44,6 +44,7 @@ export const CategoryModal = ({ open, onClose }: CategoryModalProps) => {
         toast.error("Failed to create a new category :(");
       })
       .finally(() => {
+        reset();
         router.refresh();
         onClose();
       });

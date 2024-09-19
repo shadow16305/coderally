@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { DeleteModal } from "../modals/delete-modal";
 import { ThumbsUp } from "lucide-react";
 import { PostPopover } from "./post-popover";
+import Link from "next/link";
 
 interface PostCardProps {
   title: string;
@@ -101,9 +102,13 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
   return (
     <>
       <Card className="w-full relative">
+        <Link
+          href={`/categories/${categoryName}/${id}`}
+          className="bg-neutral-100 absolute size-full rounded-lg inset-0 opacity-0 hover:opacity-100 z-0 transition"
+        />
         <CardHeader className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-x-1">
+            <div className="flex items-center gap-x-1 z-10">
               {authorInfo?.image && (
                 <div className="relative size-8">
                   <Image src={authorInfo?.image} alt={author} fill className="rounded-full" />
@@ -111,23 +116,24 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
               )}
               <p className="text-sm">{authorInfo?.name}</p>
             </div>
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-2 z-10">
               <span className="text-xs bg-neutral-100 w-fit rounded-xl px-2 py-1">/{categoryName}</span>
-
-              <Button type="button" onClick={() => router.push(`/categories/${categoryName}/${id}`)} size="sm">
-                See post
-              </Button>
               <Button type="button" onClick={handleLike} className="gap-x-1 bg-blue-500 hover:bg-blue-400">
                 <ThumbsUp size={16} fill={isLiked ? "#ffffff" : "#ffffff00"} />
                 <p>{likes?.length}</p>
               </Button>
-              {authorInfo?.id === currentUser?.id && <PostPopover id={id} content={content} modalOpen={() => setDeleteModalOpen(true)} />}
+              {authorInfo?.id === currentUser?.id && (
+                <PostPopover id={id} content={content} modalOpen={() => setDeleteModalOpen(true)} />
+              )}
             </div>
           </div>
-          <CardTitle className="text-2xl">{title}</CardTitle>
+          <CardTitle className="text-2xl z-10 w-fit">{title}</CardTitle>
         </CardHeader>
-        <CardContent className="text-base text-ellipsis">
-          <p className="max-h-[170px] overflow-hidden">{content}</p>
+        <CardContent className="text-base">
+          <div
+            className="max-h-[170px] overflow-hidden relative z-10 lg:max-w-[540px] 2xl:max-w-[720px] w-fit line-clamp-3"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
         </CardContent>
       </Card>
       <DeleteModal

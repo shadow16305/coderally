@@ -8,7 +8,9 @@ import getPosts from "@/lib/actions/get-posts";
 export default async function Home() {
   const posts = await getPosts();
 
-  const topPopularPosts = posts.sort((a, b) => b.likes.length - a.likes.length).slice(0, 5);
+  const sortedPosts = [...posts];
+
+  const topPopularPosts = sortedPosts.sort((a, b) => b.likes.length - a.likes.length).slice(0, 3);
 
   return (
     <div className="flex flex-1 h-full">
