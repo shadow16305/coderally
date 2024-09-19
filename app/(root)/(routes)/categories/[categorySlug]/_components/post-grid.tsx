@@ -1,9 +1,9 @@
 import { PostCard } from "@/components/posts/post-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Post } from "@prisma/client";
+import { Like, Post } from "@prisma/client";
 
 interface PostGridProps {
-  posts: Post[];
+  posts: (Post & { likes: Like[] })[];
   categoryId: string;
 }
 
@@ -21,6 +21,7 @@ export const PostGrid = ({ posts, categoryId }: PostGridProps) => {
             content={post.content}
             categoryId={post.categoryId}
             author={post.authorId}
+            likes={post.likes}
           />
         ))}
       </div>

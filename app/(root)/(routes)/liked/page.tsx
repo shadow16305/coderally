@@ -8,7 +8,7 @@ const LikedPage = async () => {
   return (
     <div className="flex flex-1 h-full">
       <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-4 flex-1 size-full">
-        <h1 className="font-semibold text-4xl">Liked posts</h1>
+        <h1 className="font-semibold text-3xl lg:text-4xl">Liked posts</h1>
         {posts.length > 0 ? (
           <ScrollArea className="h-3/4 w-full">
             <div className="flex flex-wrap gap-x-4 w-full">

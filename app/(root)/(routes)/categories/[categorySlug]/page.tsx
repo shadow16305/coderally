@@ -20,7 +20,7 @@ const CategoryPage = async ({ params }: { params: { categorySlug: string } }) =>
   return (
     <div className="flex flex-1 h-full">
       <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-4 flex-1 size-full">
-        <h1 className="font-semibold text-4xl">{categorySlug}</h1>
+        <h1 className="font-semibold text-3xl lg:text-4xl">{categorySlug}</h1>
         <SearchBox className="w-fit" />
         <div className="flex justify-between h-[91%]">
           <div className="w-8/12">

@@ -30,7 +30,7 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
               <Image src={author?.image} alt={author?.name} fill className="rounded-full" />
             </div>
           )}
-          <h1 className="font-semibold text-4xl">{post?.title}</h1>
+          <h1 className="font-semibold text-3xl lg:text-4xl">{post?.title}</h1>
         </div>
         <div className="flex justify-between h-[91%]">
           <div className="w-8/12 space-y-4">

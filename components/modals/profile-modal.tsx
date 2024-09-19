@@ -60,13 +60,14 @@ export const ProfileModal = ({ currentUser }: { currentUser: User }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.1 }}
-              className="bg-black/40 absolute top-0 left-0 w-screen h-screen z-40 overflow-hidden"
+              className="bg-black/80 absolute top-0 left-0 w-screen h-screen z-40 overflow-hidden"
               onClick={() => setIsOpen(false)}
             />
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.08 }}
               className="z-50 absolute inset-0 size-fit m-auto">
               <div className={`bg-neutral-100 rounded-xl h-fit w-fit space-y-4 p-4 ${isOpen ? "block" : "hidden"}`}>
                 <div className="space-y-1">

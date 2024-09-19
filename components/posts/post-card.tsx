@@ -13,7 +13,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { DeleteModal } from "../modals/delete-modal";
 import { ThumbsUp } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { PostPopover } from "./post-popover";
 
 interface PostCardProps {
   title: string;
@@ -46,7 +46,6 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
         setAuthorInfo(authorInfo);
         setCurrentUser(user);
 
-        // Determine if the current user has liked this post
         const userHasLiked = likes.some((like) => like.userId === user?.id);
         setIsLiked(userHasLiked);
       } catch (error) {
@@ -59,7 +58,7 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
 
   const handleDelete = async () => {
     axios
-      .delete(`/api/post/${id}`, { data: { id } })
+      .delete(`/api/post/${id}`)
       .then(() => {
         toast.success("Post deleted.");
       })
@@ -114,18 +113,15 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
             </div>
             <div className="flex items-center gap-x-2">
               <span className="text-xs bg-neutral-100 w-fit rounded-xl px-2 py-1">/{categoryName}</span>
-              {authorInfo?.id === currentUser?.id && (
-                <Button variant="destructive" size="sm" onClick={() => setDeleteModalOpen(true)}>
-                  Delete
-                </Button>
-              )}
-              <Button onClick={() => router.push(`/categories/${categoryName}/${id}`)} size="sm">
+
+              <Button type="button" onClick={() => router.push(`/categories/${categoryName}/${id}`)} size="sm">
                 See post
               </Button>
               <Button type="button" onClick={handleLike} className="gap-x-1 bg-blue-500 hover:bg-blue-400">
                 <ThumbsUp size={16} fill={isLiked ? "#ffffff" : "#ffffff00"} />
                 <p>{likes?.length}</p>
               </Button>
+              {authorInfo?.id === currentUser?.id && <PostPopover id={id} content={content} modalOpen={() => setDeleteModalOpen(true)} />}
             </div>
           </div>
           <CardTitle className="text-2xl">{title}</CardTitle>
