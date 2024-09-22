@@ -19,19 +19,20 @@ const SearchPage = async () => {
           <SearchBox />
         </div>
         <div className="flex flex-wrap gap-x-4 w-full mt-4">
-          {posts.map((post) => (
-            <div className="w-5/12">
-              <PostCard
-                key={post.id}
-                id={post.id}
-                title={post.title}
-                categoryId={post.categoryId}
-                content={post.content}
-                author={post.authorId}
-                likes={post.likes}
-              />
-            </div>
-          ))}
+          {posts &&
+            posts.map((post) => (
+              <div className="w-5/12">
+                <PostCard
+                  key={post.id}
+                  id={post.id}
+                  title={post.title}
+                  categoryId={post.categoryId}
+                  content={post.content}
+                  author={post.authorId}
+                  likes={post.likes}
+                />
+              </div>
+            ))}
         </div>
       </div>
     </div>

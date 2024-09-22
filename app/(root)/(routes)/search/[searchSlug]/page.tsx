@@ -6,7 +6,8 @@ import { PostCard } from "@/components/posts/post-card";
 const SearchValuePage = async ({ params }: { params: { searchSlug: string } }) => {
   const posts = await getPosts();
 
-  const filteredPosts = posts.filter((post) => post.title.toLowerCase().includes(params.searchSlug.toLowerCase()));
+  const filteredPosts =
+    posts && posts.filter((post) => post.title.toLowerCase().includes(params.searchSlug.toLowerCase()));
 
   return (
     <div className="flex flex-1 h-full">

@@ -34,7 +34,7 @@ export const CommentItem = ({ comment, author, currentUser }: CommentItemProps) 
 
   useEffect(() => {
     fetchReplies();
-  }, [comment.id]);
+  }, [comment.id, fetchReplies]);
 
   const deleteHandler = async () => {
     axios
