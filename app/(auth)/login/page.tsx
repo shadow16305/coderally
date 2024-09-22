@@ -36,13 +36,12 @@ export default function Login() {
   };
 
   const socialAction = (action: string) => {
-    signIn(action, { redirect: false }).then((callback) => {
+    signIn(action, { callbackUrl: "/" }).then((callback) => {
       if (callback?.error) {
         toast.error("Invalid credentials");
       }
       if (callback?.ok && !callback?.error) {
         toast.success("Logged in!");
-        router.push("/");
       }
     });
   };

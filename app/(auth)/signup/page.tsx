@@ -29,13 +29,12 @@ export default function Register() {
   };
 
   const socialAction = (action: string) => {
-    signIn(action, { redirect: false }).then((callback) => {
+    signIn(action, { callbackUrl: "/" }).then((callback) => {
       if (callback?.error) {
         toast.error("Invalid credentials");
       }
       if (callback?.ok && !callback?.error) {
         toast.success("Signed up!");
-        router.push("/");
       }
     });
   };
