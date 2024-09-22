@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Comment, User } from "@prisma/client";
 import getCommentReplies from "@/lib/actions/get-comment-replies";
 import { Button } from "@/components/ui/button";
@@ -27,14 +27,14 @@ export const CommentItem = ({ comment, author, currentUser }: CommentItemProps) 
   const [showReplies, setShowReplies] = useState(false);
   const router = useRouter();
 
-  const fetchReplies = async () => {
+  const fetchReplies = useCallback(async () => {
     const commentReplies = await getCommentReplies(comment.id);
     setReplies(commentReplies);
-  };
+  }, [comment.id]);
 
   useEffect(() => {
     fetchReplies();
-  }, [comment.id, fetchReplies]);
+  }, [fetchReplies]);
 
   const deleteHandler = async () => {
     axios
