@@ -6,8 +6,7 @@ import { PostCard } from "@/components/posts/post-card";
 const SearchValuePage = async ({ params }: { params: { searchSlug: string } }) => {
   const posts = await getPosts();
 
-  const filteredPosts =
-    posts && posts.filter((post) => post.title.toLowerCase().includes(params.searchSlug.toLowerCase()));
+  const filteredPosts = posts.filter((post) => post.title.toLowerCase().includes(params.searchSlug.toLowerCase()));
 
   return (
     <div className="flex flex-1 h-full">
@@ -22,10 +21,9 @@ const SearchValuePage = async ({ params }: { params: { searchSlug: string } }) =
           <SearchBox />
         </div>
         <div className="flex flex-wrap gap-x-4 w-full mt-4">
-          {filteredPosts.map((post) => (
-            <div className="w-5/12">
+          {filteredPosts.map((post, index) => (
+            <div key={post.id} className="w-5/12">
               <PostCard
-                key={post.id}
                 id={post.id}
                 title={post.title}
                 categoryId={post.categoryId}

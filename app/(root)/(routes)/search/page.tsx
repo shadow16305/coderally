@@ -21,9 +21,8 @@ const SearchPage = async () => {
         <div className="flex flex-wrap gap-x-4 w-full mt-4">
           {posts &&
             posts.map((post) => (
-              <div className="w-5/12">
+              <div key={post.id} className="w-5/12">
                 <PostCard
-                  key={post.id}
                   id={post.id}
                   title={post.title}
                   categoryId={post.categoryId}
