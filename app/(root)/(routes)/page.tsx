@@ -10,6 +10,7 @@ export default async function Home() {
 
   const sortedPosts = [...posts];
 
+  const recentPosts = sortedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const topPopularPosts = sortedPosts.sort((a, b) => b.likes.length - a.likes.length).slice(0, 3);
 
   return (
@@ -25,7 +26,7 @@ export default async function Home() {
         <div className="flex flex-col lg:flex-row justify-between w-full h-[91%] mt-8">
           <div className="w-full lg:w-[62%] space-y-2">
             <h2 className="text-2xl font-semibold">Recent</h2>
-            <Recent posts={posts} />
+            <Recent posts={recentPosts} />
           </div>
           <Separator orientation="vertical" className="hidden lg:block" />
           <div className="w-full lg:w-1/3 space-y-2">
