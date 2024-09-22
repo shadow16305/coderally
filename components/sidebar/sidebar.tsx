@@ -1,5 +1,5 @@
 import { IconBrandTabler } from "@tabler/icons-react";
-import { Bookmark, ChartBarStacked, LogIn, ThumbsUp } from "lucide-react";
+import { ChartBarStacked, LogIn, ThumbsUp } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SidebarBody } from "./sidebar-body";

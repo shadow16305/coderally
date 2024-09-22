@@ -23,7 +23,7 @@ export default async function Home() {
           </div>
         </div>
         <div className="flex flex-col lg:flex-row justify-between w-full h-[91%] mt-8">
-          <div className="w-full lg:w-7/12 space-y-2">
+          <div className="w-full lg:w-[62%] space-y-2">
             <h2 className="text-2xl font-semibold">Recent</h2>
             <Recent posts={posts} />
           </div>

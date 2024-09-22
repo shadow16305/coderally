@@ -4,7 +4,7 @@ import { Like, Post } from "@prisma/client";
 
 export const Recent = ({ posts }: { posts: (Post & { likes: Like[] })[] }) => {
   return (
-    <ScrollArea className="w-full h-full pb-10 lg:pr-10">
+    <ScrollArea className="w-full h-full pb-10">
       <div className="flex flex-col gap-y-4">
         {posts.map((post) => (
           <PostCard

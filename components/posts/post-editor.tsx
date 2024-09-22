@@ -7,14 +7,16 @@ import { Button } from "../ui/button";
 import { Bold, Italic, Strikethrough } from "lucide-react";
 
 interface PostEditorProps {
+  defaultContent?: string;
   onChange: (content: string) => void;
 }
 
-const PostEditor = ({ onChange }: PostEditorProps) => {
+const PostEditor = ({ onChange, defaultContent }: PostEditorProps) => {
   const [isEditable, setIsEditable] = useState(true);
 
   const editor = useEditor({
     extensions: [StarterKit],
+    content: defaultContent,
     editorProps: {
       attributes: {
         class:
@@ -64,7 +66,7 @@ const PostEditor = ({ onChange }: PostEditorProps) => {
           </div>
         </BubbleMenu>
       )}
-      <EditorContent editor={editor} />;
+      <EditorContent editor={editor} />
     </>
   );
 };

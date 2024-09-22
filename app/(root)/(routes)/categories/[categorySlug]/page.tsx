@@ -22,11 +22,11 @@ const CategoryPage = async ({ params }: { params: { categorySlug: string } }) =>
       <div className="p-2 md:p-10 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-4 flex-1 size-full">
         <h1 className="font-semibold text-3xl lg:text-4xl">{categorySlug}</h1>
         <SearchBox className="w-fit" />
-        <div className="flex justify-between h-[91%]">
-          <div className="w-8/12">
+        <div className="flex flex-col-reverse lg:flex-row justify-between lg:h-[91%]">
+          <div className="lg:w-8/12 mt-4 lg:mt-0">
             {category?.posts && <PostGrid posts={category?.posts} categoryId={category.id} />}
           </div>
-          <Separator orientation="vertical" />
+          <Separator orientation="vertical" className="hidden lg:block" />
           <CategoryInfo
             category={category}
             author={author}

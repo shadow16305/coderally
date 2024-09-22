@@ -78,7 +78,7 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-[91%] md:max-w-3xl">
           <DialogHeader>
             <DialogTitle className="text-2xl">Post something!</DialogTitle>
             <DialogDescription>
@@ -98,7 +98,7 @@ export const PostModal = ({ open, onClose }: PostModalProps) => {
                 {pathname === "/" && (
                   <div>
                     <span className="font-medium text-base">Category</span>
-                    <div className="flex items-center gap-x-4">
+                    <div className="flex flex-col md:flex-row md:items-center gap-x-4">
                       <CategorySelect
                         categories={categories}
                         value={categoryValue}

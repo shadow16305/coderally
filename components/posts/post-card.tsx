@@ -15,6 +15,7 @@ import { DeleteModal } from "../modals/delete-modal";
 import { ThumbsUp } from "lucide-react";
 import { PostPopover } from "./post-popover";
 import Link from "next/link";
+import { EditModal } from "../modals/edit-modal";
 
 interface PostCardProps {
   title: string;
@@ -30,6 +31,7 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authorInfo, setAuthorInfo] = useState<User | undefined>();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
   const router = useRouter();
@@ -67,6 +69,7 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
         toast.error("Failed to delete post.");
       })
       .finally(() => {
+        setDeleteModalOpen(false);
         router.refresh();
       });
   };
@@ -123,7 +126,10 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
                 <p>{likes?.length}</p>
               </Button>
               {authorInfo?.id === currentUser?.id && (
-                <PostPopover id={id} content={content} modalOpen={() => setDeleteModalOpen(true)} />
+                <PostPopover
+                  setEditModalOpen={() => setEditModalOpen(true)}
+                  setDeleteModalOpen={() => setDeleteModalOpen(true)}
+                />
               )}
             </div>
           </div>
@@ -131,11 +137,12 @@ export const PostCard = ({ title, content, categoryId, author, id, likes }: Post
         </CardHeader>
         <CardContent className="text-base">
           <div
-            className="max-h-[170px] overflow-hidden relative z-10 lg:max-w-[540px] 2xl:max-w-[720px] w-fit line-clamp-3"
+            className="max-h-[170px] overflow-hidden relative z-10 lg:max-w-md xl:max-w-xl 2xl:max-w-[810px] w-fit line-clamp-3"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </CardContent>
       </Card>
+      <EditModal id={id} content={content} open={editModalOpen} onClose={() => setEditModalOpen(false)} />
       <DeleteModal
         onDelete={handleDelete}
         open={deleteModalOpen}

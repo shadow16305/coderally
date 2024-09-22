@@ -75,8 +75,8 @@ export const CategoryInfo = ({ category, author, userId, categoryFollowers }: Ca
 
   return (
     <>
-      <aside className="space-y-4 w-1/4">
-        <div className="flex items-center justify-between">
+      <aside className="space-y-4 lg:w-1/4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between">
           <h2 className="text-2xl font-semibold">Information</h2>
           <p className="text-sm">
             <span className="text-neutral-600">Followers:</span> {category?._count.followers}

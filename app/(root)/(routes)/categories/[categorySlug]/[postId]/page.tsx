@@ -32,14 +32,14 @@ const PostPage = async ({ params }: { params: { postId: string } }) => {
           )}
           <h1 className="font-semibold text-3xl lg:text-4xl">{post?.title}</h1>
         </div>
-        <div className="flex justify-between h-[91%]">
-          <div className="w-8/12 space-y-4">
+        <div className="flex flex-col lg:flex-row justify-between lg:h-[91%]">
+          <div className="lg:w-8/12 space-y-4">
             <div dangerouslySetInnerHTML={{ __html: post!.content }} />
             <Separator />
             <CommentGrid postId={params.postId} comments={comments} users={users!} currentUser={currentUser!} />
           </div>
-          <Separator orientation="vertical" />
-          <aside className="space-y-4 w-[29%]">
+          <Separator orientation="vertical" className="hidden lg:block" />
+          <aside className="space-y-4 lg:w-[29%]">
             <h2 className="text-2xl font-semibold">Other posts</h2>
             <div className="flex flex-col gap-y-4">
               {filteredPosts.slice(0, 4).map((postItem) => (

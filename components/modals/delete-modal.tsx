@@ -29,8 +29,8 @@ export const DeleteModal = ({ category, onClose, open, onDelete, variant }: Dele
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader className="space-y-4">
+      <DialogContent className="max-w-[91%] sm:max-w-lg">
+        <DialogHeader className="space-y-2 lg:space-y-4">
           <DialogTitle>Delete {category?.name}</DialogTitle>
           <DialogDescription>Are you sure you want to delete this {variantLabel}?</DialogDescription>
         </DialogHeader>

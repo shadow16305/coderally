@@ -1,38 +1,32 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
-import { Textarea } from "../ui/text-area";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import PostEditor from "../posts/post-editor";
+import { useState } from "react";
 
 interface EditModalProps {
   id: string;
   content: string;
+  open: boolean;
+  onClose: () => void;
 }
 
-export const EditModal = ({ id, content }: EditModalProps) => {
-  const { register, handleSubmit } = useForm<FieldValues>({
-    defaultValues: {
-      content: content,
-    },
-  });
+export const EditModal = ({ id, content, open, onClose }: EditModalProps) => {
+  const [editedContent, setEditedContent] = useState("");
+
+  const { handleSubmit } = useForm<FieldValues>();
 
   const router = useRouter();
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onSubmit = async () => {
     axios
-      .patch(`/api/post/${id}`, data)
+      .patch(`/api/post/${id}`, { content: editedContent })
       .then(() => {
         toast.success("Post updated!");
       })
@@ -40,18 +34,14 @@ export const EditModal = ({ id, content }: EditModalProps) => {
         toast.error("Failed to update post :(");
       })
       .finally(() => {
+        onClose();
         router.refresh();
       });
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button type="button" variant="secondary">
-          Edit
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-[91%] md:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Edit post</DialogTitle>
           <DialogDescription>
@@ -60,7 +50,7 @@ export const EditModal = ({ id, content }: EditModalProps) => {
                 <Label htmlFor="content" className="text-base">
                   Content
                 </Label>
-                <Textarea id="content" {...register("content")} data-test="post-content-input" />
+                <PostEditor onChange={setEditedContent} defaultContent={content} />
               </div>
               <Button type="submit" data-test="post-submit" className="mt-4">
                 Confirm

@@ -11,9 +11,9 @@ const LikedPage = async () => {
         <h1 className="font-semibold text-3xl lg:text-4xl">Liked posts</h1>
         {posts.length > 0 ? (
           <ScrollArea className="h-3/4 w-full">
-            <div className="flex flex-wrap gap-x-4 w-full">
+            <div className="flex flex-col lg:flex-row flex-wrap gap-4 w-full">
               {posts.map((post) => (
-                <div className="w-5/12">
+                <div className="lg:w-5/12">
                   <PostCard
                     key={post.id}
                     id={post.id}
