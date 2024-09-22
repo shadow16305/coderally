@@ -10,7 +10,7 @@ export default async function Home() {
 
   const sortedPosts = [...posts];
 
-  const recentPosts = sortedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const recentPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const topPopularPosts = sortedPosts.sort((a, b) => b.likes.length - a.likes.length).slice(0, 3);
 
   return (
